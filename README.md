@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Defense-Tech Spending Tracker - Frontend
 
-## Getting Started
+Bloomberg Terminal-style frontend for tracking US defense spending to tech companies.
 
-First, run the development server:
+## Live Site
+- **Frontend**: https://boomberg.xyz
+- **Backend API**: https://boomberg.xyz/api
+
+## Tech Stack
+- **Framework**: Next.js 14 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Charts**: Recharts, D3.js
+- **Deployment**: Cloudflare Pages
+
+## Features
+- Real-time search of defense contracts
+- Bloomberg Terminal-style dark theme interface
+- Interactive charts and visualizations
+- Contractor and recipient detail pages
+- Social sharing with citations
+- Mobile-responsive design
+
+## Local Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy `.env.example` to `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env.local
+```
 
-## Learn More
+Required variables:
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: https://boomberg.xyz)
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+defense-tech-frontend/
+├── app/                      # Next.js App Router pages
+│   ├── layout.tsx           # Root layout
+│   ├── page.tsx             # Dashboard (home page)
+│   ├── contractor/          # Contractor detail pages
+│   ├── recipient/           # Recipient detail pages
+│   └── search/              # Search results page
+├── components/              # React components
+│   ├── dashboard/          # Dashboard panels
+│   ├── search/             # Search components
+│   ├── charts/             # Chart components
+│   ├── citations/          # Citation display components
+│   └── ui/                 # shadcn/ui components
+├── lib/                    # Utility functions
+│   ├── api.ts             # API client
+│   ├── formatting.ts      # Number/currency formatting
+│   └── utils.ts           # General utilities
+├── types/                  # TypeScript type definitions
+└── public/                 # Static assets
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+The frontend is automatically deployed to Cloudflare Pages on every push to `main`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Cloudflare Pages Configuration
+- **Build command**: `npm run build`
+- **Build output directory**: `.next`
+- **Environment variables**: Set `NEXT_PUBLIC_API_URL` in Cloudflare Pages dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Backend API
+
+The backend API is already deployed at `https://boomberg.xyz`.
+
+### Available Endpoints:
+- `GET /api/spending/summary` - Top spending contractors and recipients
+- `GET /api/company/<name>` - Company details
+- `GET /api/contracts/search` - Search contracts with filters
+- `GET /api/stats` - Overall statistics
+
+## Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Test locally
+4. Push and create a pull request
+
+## License
+
+MIT
