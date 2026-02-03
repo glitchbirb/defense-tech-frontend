@@ -1,65 +1,132 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import { HeaderStats } from '@/components/dashboard/HeaderStats';
+import { SearchBar } from '@/components/search/SearchBar';
+import { TopContractors } from '@/components/dashboard/TopContractors';
+import { TopRecipients } from '@/components/dashboard/TopRecipients';
+import { RecentContracts } from '@/components/dashboard/RecentContracts';
+import { TrendingInsights } from '@/components/dashboard/TrendingInsights';
+import { getSpendingSummary, searchContracts, getStats } from '@/lib/api';
+import type { Company, Contract, Stats } from '@/types';
+
+export default function Dashboard() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch all data in parallel
+        const [statsRes, summaryRes, contractsRes] = await Promise.all([
+          getStats(),
+          getSpendingSummary({ limit: 10, sort: 'total_value' }),
+          searchContracts({ limit: 50, defense_only: true })
+        ]);
+
+        if (statsRes.success && statsRes.data) {
+          setStats(statsRes.data);
+        }
+
+        if (summaryRes.success && summaryRes.data) {
+          setCompanies(summaryRes.data);
+        }
+
+        if (contractsRes.success && contractsRes.data) {
+          setContracts(contractsRes.data);
+        }
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to load dashboard data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block w-16 h-16 border-4 border-[#00d4ff] border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-[#00ff00] text-xl">LOADING DEFENSE-TECH DATA...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <p className="text-red-500 text-xl mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-[#00d4ff] text-[#0a0e27] rounded font-bold hover:bg-[#00ff00] transition-colors"
+          >
+            RETRY
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">No data available</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-[#0a0e27]">
+      {/* Header Stats Bar */}
+      <HeaderStats stats={stats} lastUpdated={new Date().toISOString()} />
+
+      {/* Search Bar */}
+      <SearchBar />
+
+      {/* Main Dashboard Grid */}
+      <div className="px-6 pb-6">
+        {/* Top Row: Contractors and Recipients */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <TopContractors data={companies} />
+          <TopRecipients data={companies} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Bottom Row: Recent Contracts and Trending Insights */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <RecentContracts contracts={contracts} />
+          </div>
+          <div>
+            <TrendingInsights />
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-[#1a2147] px-6 py-4 mt-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-gray-500">
+          <div>
+            Data Sources: USAspending.gov | SAM.gov | Last Updated: {new Date().toLocaleDateString()}
+          </div>
+          <div className="flex gap-4">
+            <a href="#" className="hover:text-[#00d4ff] transition-colors">Methodology</a>
+            <a href="#" className="hover:text-[#00d4ff] transition-colors">API Docs</a>
+            <a href="https://github.com/glitchbirb/defense-tech-frontend" className="hover:text-[#00d4ff] transition-colors">GitHub</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
