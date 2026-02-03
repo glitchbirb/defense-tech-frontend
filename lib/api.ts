@@ -64,14 +64,39 @@ export async function getSpendingSummary(params?: {
   limit?: number;
   sort?: 'total_value' | 'total_contracts';
 }): Promise<ApiResponse<SpendingSummary[]>> {
-  const query = new URLSearchParams();
-  if (params?.limit) query.set('limit', params.limit.toString());
-  if (params?.sort) query.set('sort', params.sort);
+  try {
+    const query = new URLSearchParams();
+    if (params?.limit) query.set('limit', params.limit.toString());
+    if (params?.sort) query.set('sort', params.sort);
 
-  const url = `${API_BASE_URL}/api/spending/summary${query.toString() ? `?${query}` : ''}`;
+    const url = `${API_BASE_URL}/api/spending/summary${query.toString() ? `?${query}` : ''}`;
 
-  const response = await fetch(url);
-  return response.json();
+    const response = await fetch(url);
+    const json = await response.json();
+
+    // Transform backend format {count, data} to {success, data}
+    // Map 'company' field to 'name' and parse numeric values
+    const transformedData = (json.data || []).map((item: any) => ({
+      name: item.company || item.name,
+      total_contracts: item.total_contracts,
+      total_contract_value: parseFloat(item.total_value || item.total_contract_value || 0),
+      avg_contract_value: parseFloat(item.avg_value || item.avg_contract_value || 0),
+      latest_contract_date: item.latest_date || item.latest_contract_date,
+      num_agencies: item.num_agencies,
+      federal_percentage: item.federal_percentage
+    }));
+
+    return {
+      success: true,
+      data: transformedData,
+      count: json.count
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch spending summary'
+    };
+  }
 }
 
 /**
@@ -97,31 +122,63 @@ export async function searchContracts(params?: {
   defense_only?: boolean;
   limit?: number;
 }): Promise<ApiResponse<Contract[]>> {
-  const query = new URLSearchParams();
+  try {
+    const query = new URLSearchParams();
 
-  if (params?.company) query.set('company', params.company);
-  if (params?.agency) query.set('agency', params.agency);
-  if (params?.min_value) query.set('min_value', params.min_value.toString());
-  if (params?.max_value) query.set('max_value', params.max_value.toString());
-  if (params?.start_date) query.set('start_date', params.start_date);
-  if (params?.end_date) query.set('end_date', params.end_date);
-  if (params?.defense_only !== undefined) query.set('defense_only', params.defense_only.toString());
-  if (params?.limit) query.set('limit', params.limit.toString());
+    if (params?.company) query.set('company', params.company);
+    if (params?.agency) query.set('agency', params.agency);
+    if (params?.min_value) query.set('min_value', params.min_value.toString());
+    if (params?.max_value) query.set('max_value', params.max_value.toString());
+    if (params?.start_date) query.set('start_date', params.start_date);
+    if (params?.end_date) query.set('end_date', params.end_date);
+    if (params?.defense_only !== undefined) query.set('defense_only', params.defense_only.toString());
+    if (params?.limit) query.set('limit', params.limit.toString());
 
-  const url = `${API_BASE_URL}/api/contracts/search${query.toString() ? `?${query}` : ''}`;
+    const url = `${API_BASE_URL}/api/contracts/search${query.toString() ? `?${query}` : ''}`;
 
-  const response = await fetch(url);
-  return response.json();
+    const response = await fetch(url);
+    const json = await response.json();
+
+    // Transform backend format {count, data} to {success, data}
+    return {
+      success: true,
+      data: json.data || [],
+      count: json.count
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to search contracts'
+    };
+  }
 }
 
 /**
  * Get overall statistics
  */
 export async function getStats(): Promise<ApiResponse<Stats>> {
-  const url = `${API_BASE_URL}/api/stats`;
+  try {
+    const url = `${API_BASE_URL}/api/stats`;
 
-  const response = await fetch(url);
-  return response.json();
+    const response = await fetch(url);
+    const json = await response.json();
+
+    // Backend already returns {success, data} format for this endpoint
+    if (json.success && json.data) {
+      return json;
+    }
+
+    // Fallback if format is different
+    return {
+      success: true,
+      data: json
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch stats'
+    };
+  }
 }
 
 /**
