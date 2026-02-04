@@ -1,9 +1,9 @@
 /**
  * API Client for Defense-Tech Tracker Backend
- * Base URL: https://boomberg.xyz
+ * Base URL: https://api.boomberg.xyz
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boomberg.xyz';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.boomberg.xyz';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -44,6 +44,13 @@ export interface SpendingSummary {
   federal_percentage: number;
 }
 
+export interface AgencySpending {
+  agency: string;
+  total_contracts: number;
+  total_value: number;
+  avg_value: number;
+}
+
 export interface Stats {
   total_spending_usd: number;
   total_defense_contracts: number;
@@ -55,6 +62,41 @@ export interface Stats {
     spending: number;
     contracts: number;
   }>;
+}
+
+/**
+ * Get spending summary by agency
+ */
+export async function getAgenciesSpending(params?: {
+  limit?: number;
+}): Promise<ApiResponse<AgencySpending[]>> {
+  try {
+    const query = new URLSearchParams();
+    if (params?.limit) query.set('limit', params.limit.toString());
+
+    const url = `${API_BASE_URL}/api/spending/agencies${query.toString() ? `?${query}` : ''}`;
+
+    const response = await fetch(url);
+    const json = await response.json();
+
+    const transformedData = (json.data || []).map((item: Record<string, unknown>) => ({
+      agency: String(item.agency || ''),
+      total_contracts: Number(item.total_contracts || 0),
+      total_value: Number(item.total_value || 0),
+      avg_value: Number(item.avg_value || 0)
+    }));
+
+    return {
+      success: true,
+      data: transformedData,
+      count: json.count
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch agencies spending'
+    };
+  }
 }
 
 /**
@@ -76,14 +118,14 @@ export async function getSpendingSummary(params?: {
 
     // Transform backend format {count, data} to {success, data}
     // Map 'company' field to 'name' and parse numeric values
-    const transformedData = (json.data || []).map((item: any) => ({
-      name: item.company || item.name,
-      total_contracts: item.total_contracts,
-      total_contract_value: parseFloat(item.total_value || item.total_contract_value || 0),
-      avg_contract_value: parseFloat(item.avg_value || item.avg_contract_value || 0),
-      latest_contract_date: item.latest_date || item.latest_contract_date,
-      num_agencies: item.num_agencies,
-      federal_percentage: item.federal_percentage
+    const transformedData = (json.data || []).map((item: Record<string, unknown>) => ({
+      name: String(item.company || item.name || ''),
+      total_contracts: Number(item.total_contracts || 0),
+      total_contract_value: Number(item.total_value || item.total_contract_value || 0),
+      avg_contract_value: Number(item.avg_value || item.avg_contract_value || 0),
+      latest_contract_date: String(item.latest_date || item.latest_contract_date || ''),
+      num_agencies: Number(item.num_agencies || 0),
+      federal_percentage: Number(item.federal_percentage || 0)
     }));
 
     return {

@@ -3,16 +3,17 @@
 import { useEffect, useState } from 'react';
 import { HeaderStats } from '@/components/dashboard/HeaderStats';
 import { SearchBar } from '@/components/search/SearchBar';
-import { TopContractors } from '@/components/dashboard/TopContractors';
-import { TopRecipients } from '@/components/dashboard/TopRecipients';
+import { SimpleBarChart } from '@/components/dashboard/SimpleBarChart';
 import { RecentContracts } from '@/components/dashboard/RecentContracts';
 import { TrendingInsights } from '@/components/dashboard/TrendingInsights';
-import { getSpendingSummary, searchContracts, getStats } from '@/lib/api';
+import { getSpendingSummary, searchContracts, getStats, getAgenciesSpending } from '@/lib/api';
 import type { Company, Contract, Stats } from '@/types';
+import type { AgencySpending } from '@/lib/api';
 
 export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [agencies, setAgencies] = useState<AgencySpending[]>([]);
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,9 +25,10 @@ export default function Dashboard() {
         setError(null);
 
         // Fetch all data in parallel
-        const [statsRes, summaryRes, contractsRes] = await Promise.all([
+        const [statsRes, summaryRes, agenciesRes, contractsRes] = await Promise.all([
           getStats(),
           getSpendingSummary({ limit: 10, sort: 'total_value' }),
+          getAgenciesSpending({ limit: 10 }),
           searchContracts({ limit: 50, defense_only: true })
         ]);
 
@@ -36,6 +38,10 @@ export default function Dashboard() {
 
         if (summaryRes.success && summaryRes.data) {
           setCompanies(summaryRes.data);
+        }
+
+        if (agenciesRes.success && agenciesRes.data) {
+          setAgencies(agenciesRes.data);
         }
 
         if (contractsRes.success && contractsRes.data) {
@@ -97,10 +103,26 @@ export default function Dashboard() {
 
       {/* Main Dashboard Grid */}
       <div className="px-6 pb-6">
-        {/* Top Row: Contractors and Recipients */}
+        {/* Top Row: Agencies and Contractors */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <TopContractors data={companies} />
-          <TopRecipients data={companies} />
+          <SimpleBarChart
+            data={agencies.slice(0, 10).map(a => ({
+              name: a.agency.length > 25 ? a.agency.substring(0, 25) + '...' : a.agency,
+              value: a.total_value,
+              fullName: a.agency
+            }))}
+            color="#8b5cf6"
+            title="TOP SPENDING AGENCIES"
+          />
+          <SimpleBarChart
+            data={companies.slice(0, 10).map(c => ({
+              name: c.name.length > 20 ? c.name.substring(0, 20) + '...' : c.name,
+              value: c.total_contract_value,
+              fullName: c.name
+            }))}
+            color="#00d4ff"
+            title="TOP CONTRACTORS"
+          />
         </div>
 
         {/* Bottom Row: Recent Contracts and Trending Insights */}
@@ -122,8 +144,6 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-4">
             <a href="#" className="hover:text-[#00d4ff] transition-colors">Methodology</a>
-            <a href="#" className="hover:text-[#00d4ff] transition-colors">API Docs</a>
-            <a href="https://github.com/glitchbirb/defense-tech-frontend" className="hover:text-[#00d4ff] transition-colors">GitHub</a>
           </div>
         </div>
       </footer>
