@@ -91,10 +91,7 @@ export function formatPercentage(value: number): string {
  * Get color for spending amount (for visual indicators)
  */
 export function getAmountColor(amount: number): string {
-  if (amount >= 1_000_000_000) return 'text-green-500'; // > $1B
-  if (amount >= 500_000_000) return 'text-green-400'; // $500M-$1B
-  if (amount >= 100_000_000) return 'text-amber-400'; // $100M-$500M
-  return 'text-gray-400'; // < $100M
+  return 'text-white'; // Totals/Key Reference Values - always white per color scheme
 }
 
 /**

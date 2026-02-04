@@ -242,3 +242,77 @@ export async function healthCheck(): Promise<{ status: string; timestamp: string
   const response = await fetch(url);
   return response.json();
 }
+
+/**
+ * NAICS interfaces and functions
+ */
+export interface NAICSCode {
+  code: string;
+  description: string;
+  total_recipients: number;
+  total_spending: number;
+  avg_spending_per_recipient: number;
+  max_recipient_amount: number;
+  earliest_data: string;
+  latest_data: string;
+}
+
+export interface NAICSRecipient {
+  naics_code: string;
+  naics_description: string;
+  recipient_name: string;
+  recipient_uei: string;
+  amount: number;
+  rank: number;
+  time_period_start: string;
+  time_period_end: string;
+}
+
+/**
+ * Get summary of all tracked NAICS codes
+ */
+export async function getNAICSSummary(): Promise<ApiResponse<NAICSCode[]>> {
+  try {
+    const url = `${API_BASE_URL}/api/naics/summary`;
+
+    const response = await fetch(url);
+    const json = await response.json();
+
+    return {
+      success: json.status === 'success',
+      data: json.data || [],
+      count: json.count
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch NAICS summary'
+    };
+  }
+}
+
+/**
+ * Get recipients for a specific NAICS code
+ */
+export async function getNAICSRecipients(naicsCode: string, limit?: number): Promise<ApiResponse<NAICSRecipient[]>> {
+  try {
+    const query = new URLSearchParams();
+    if (limit) query.set('limit', limit.toString());
+
+    const url = `${API_BASE_URL}/api/naics/${naicsCode}/recipients${query.toString() ? `?${query}` : ''}`;
+
+    const response = await fetch(url);
+    const json = await response.json();
+
+    return {
+      success: json.status === 'success',
+      data: json.data || [],
+      count: json.count
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch NAICS recipients'
+    };
+  }
+}

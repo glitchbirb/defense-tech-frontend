@@ -25,12 +25,12 @@ export function SearchBar({ onSearch }: SearchBarProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search contractors, recipients, contracts... (Cmd+K)"
-            className="w-full px-6 py-4 bg-[#0f1433] border-2 border-[#1a2147] rounded-lg text-white placeholder-gray-500 focus:border-[#00d4ff] focus:outline-none text-lg font-mono transition-colors"
+            className="w-full px-6 py-4 bg-black border-2 border-[#666666] rounded-lg text-[#FFA500] placeholder-[#666666] focus:border-[#00E5FF] focus:outline-none text-lg font-mono transition-colors"
           />
           <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
             <button
               type="submit"
-              className="px-4 py-2 bg-[#00d4ff] text-[#0a0e27] rounded font-bold hover:bg-[#00ff00] transition-colors"
+              className="px-4 py-2 bg-[#00E5FF] text-black rounded font-bold hover:bg-[#26C6DA] transition-colors"
             >
               SEARCH
             </button>
@@ -40,25 +40,25 @@ export function SearchBar({ onSearch }: SearchBarProps) {
         <div className="flex gap-3 mt-4 text-sm">
           <button
             type="button"
-            className="px-3 py-1 border border-[#1a2147] rounded text-gray-400 hover:border-[#00d4ff] hover:text-[#00d4ff] transition-colors"
+            className="px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
           >
             Contractor
           </button>
           <button
             type="button"
-            className="px-3 py-1 border border-[#1a2147] rounded text-gray-400 hover:border-[#00d4ff] hover:text-[#00d4ff] transition-colors"
+            className="px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
           >
             Recipient
           </button>
           <button
             type="button"
-            className="px-3 py-1 border border-[#1a2147] rounded text-gray-400 hover:border-[#00d4ff] hover:text-[#00d4ff] transition-colors"
+            className="px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
           >
             Contract
           </button>
           <button
             type="button"
-            className="px-3 py-1 border border-[#1a2147] rounded text-gray-400 hover:border-[#00d4ff] hover:text-[#00d4ff] transition-colors"
+            className="px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
           >
             More Filters ▼
           </button>

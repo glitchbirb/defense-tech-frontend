@@ -68,8 +68,8 @@ export function TrendingInsights({ contracts }: TrendingInsightsProps) {
     alert('Category filtering coming soon!');
   };
   return (
-    <div className="bg-[#0f1433] border border-[#1a2147] rounded-lg p-6">
-      <h2 className="text-xl font-bold text-white mb-4">TRENDING INSIGHTS</h2>
+    <div className="bg-black border border-[#666666] rounded-lg p-6">
+      <h2 className="text-xl font-bold text-[#FFD700] mb-4">TRENDING INSIGHTS</h2>
 
       <div className="space-y-4">
         {/* Biggest Contract */}
@@ -79,26 +79,26 @@ export function TrendingInsights({ contracts }: TrendingInsightsProps) {
           content={
             biggestContract ? (
               <>
-                <p className="text-[#00d4ff] font-bold">{biggestContract.company} ← {biggestContract.agency}</p>
-                <p className="text-[#00ff00] text-2xl font-mono my-2">{formatCurrency(biggestContract.contract_value)}</p>
-                <p className="text-gray-400 text-sm">{biggestContract.description.substring(0, 80)}{biggestContract.description.length > 80 ? '...' : ''}</p>
-                <p className="text-gray-400 text-sm">Date: {new Date(biggestContract.contract_date).toLocaleDateString()}</p>
+                <p className="text-[#00E5FF] font-bold">{biggestContract.company} ← {biggestContract.agency}</p>
+                <p className="text-white text-2xl font-mono font-bold my-2">{formatCurrency(biggestContract.contract_value)}</p>
+                <p className="text-[#B0B0B0] text-sm">{biggestContract.description.substring(0, 80)}{biggestContract.description.length > 80 ? '...' : ''}</p>
+                <p className="text-[#B0B0B0] text-sm">Date: {new Date(biggestContract.contract_date).toLocaleDateString()}</p>
               </>
             ) : (
-              <p className="text-gray-400">No contract data available</p>
+              <p className="text-[#B0B0B0]">No contract data available</p>
             )
           }
           actions={
             <>
               <button
                 onClick={handleViewDetails}
-                className="text-xs px-3 py-1 border border-[#1a2147] rounded hover:border-[#00d4ff] transition-colors"
+                className="text-xs px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
               >
                 View Details
               </button>
               <button
                 onClick={handleShare}
-                className="text-xs px-3 py-1 border border-[#1a2147] rounded hover:border-[#00d4ff] transition-colors"
+                className="text-xs px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
               >
                 Share
               </button>
@@ -113,19 +113,19 @@ export function TrendingInsights({ contracts }: TrendingInsightsProps) {
           content={
             mostActivePair ? (
               <>
-                <p className="text-[#00d4ff] font-bold">{mostActivePair.company} ↔ {mostActivePair.agency}</p>
-                <p className="text-gray-300 text-sm my-2">Total Value: {formatCurrency(mostActivePair.total)} ({mostActivePair.count} contracts)</p>
-                <p className="text-gray-400 text-sm">Based on recent contract data</p>
+                <p className="text-[#00E5FF] font-bold">{mostActivePair.company} ↔ {mostActivePair.agency}</p>
+                <p className="text-[#FFA500] text-sm my-2">Total Value: <span className="text-white font-bold">{formatCurrency(mostActivePair.total)}</span> ({mostActivePair.count} contracts)</p>
+                <p className="text-[#B0B0B0] text-sm">Based on recent contract data</p>
               </>
             ) : (
-              <p className="text-gray-400">No partnership data available</p>
+              <p className="text-[#B0B0B0]">No partnership data available</p>
             )
           }
           actions={
             <>
               <button
                 onClick={handleViewAllContracts}
-                className="text-xs px-3 py-1 border border-[#1a2147] rounded hover:border-[#00d4ff] transition-colors"
+                className="text-xs px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
               >
                 View All Contracts
               </button>
@@ -140,23 +140,23 @@ export function TrendingInsights({ contracts }: TrendingInsightsProps) {
           content={
             aiContracts.length > 0 ? (
               <>
-                <p className="text-[#00d4ff] font-bold">Artificial Intelligence & Machine Learning</p>
-                <p className="text-gray-300 text-sm my-2">Total Spending: {formatCurrency(aiTotal)} ({aiContracts.length} contracts)</p>
+                <p className="text-[#00E5FF] font-bold">Artificial Intelligence & Machine Learning</p>
+                <p className="text-[#FFA500] text-sm my-2">Total Spending: <span className="text-white font-bold">{formatCurrency(aiTotal)}</span> ({aiContracts.length} contracts)</p>
                 {topAiCompanies.length > 0 && (
-                  <p className="text-gray-400 text-sm mt-2">
+                  <p className="text-[#B0B0B0] text-sm mt-2">
                     Top Recipients: {topAiCompanies.map(c => `${c.company} (${c.percentage}%)`).join(', ')}
                   </p>
                 )}
               </>
             ) : (
-              <p className="text-gray-400">No AI/ML contracts identified in current data</p>
+              <p className="text-[#B0B0B0]">No AI/ML contracts identified in current data</p>
             )
           }
           actions={
             <>
               <button
                 onClick={handleFilterByCategory}
-                className="text-xs px-3 py-1 border border-[#1a2147] rounded hover:border-[#00d4ff] transition-colors"
+                className="text-xs px-3 py-1 border border-[#666666] rounded text-[#B0B0B0] hover:border-[#00E5FF] hover:text-[#00E5FF] transition-colors"
               >
                 Filter by Category
               </button>
@@ -180,10 +180,10 @@ function InsightCard({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="border-l-2 border-[#00d4ff] pl-4 py-2">
+    <div className="border-l-2 border-[#00E5FF] pl-4 py-2">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-2xl">{icon}</span>
-        <h3 className="text-sm font-bold text-gray-300">{title}</h3>
+        <h3 className="text-sm font-bold text-[#FFA500]">{title}</h3>
       </div>
       <div className="mb-3">{content}</div>
       {actions && (

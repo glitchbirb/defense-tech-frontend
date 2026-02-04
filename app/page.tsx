@@ -60,10 +60,10 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-16 h-16 border-4 border-[#00d4ff] border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-[#00ff00] text-xl">LOADING DEFENSE-TECH DATA...</p>
+          <div className="inline-block w-16 h-16 border-4 border-[#00E5FF] border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-[#FFD700] text-xl">LOADING DEFENSE-TECH DATA...</p>
         </div>
       </div>
     );
@@ -71,12 +71,12 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center max-w-md">
-          <p className="text-red-500 text-xl mb-4">{error}</p>
+          <p className="text-[#D50000] text-xl mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-[#00d4ff] text-[#0a0e27] rounded font-bold hover:bg-[#00ff00] transition-colors"
+            className="px-6 py-3 bg-[#00E5FF] text-black rounded font-bold hover:bg-[#26C6DA] transition-colors"
           >
             RETRY
           </button>
@@ -87,14 +87,31 @@ export default function Dashboard() {
 
   if (!stats) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400">No data available</p>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-[#B0B0B0]">No data available</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0e27]">
+    <div className="min-h-screen bg-black">
+      {/* Navigation */}
+      <div className="border-b border-[#666666] px-6 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-6">
+            <a href="/" className="text-[#FFD700] font-bold hover:text-[#00E5FF] transition-colors">
+              DASHBOARD
+            </a>
+            <a href="/naics" className="text-[#B0B0B0] hover:text-[#00E5FF] transition-colors">
+              NAICS INDUSTRIES
+            </a>
+          </div>
+          <div className="text-[#666666] text-sm">
+            boomberg.xyz
+          </div>
+        </div>
+      </div>
+
       {/* Header Stats Bar */}
       <HeaderStats stats={stats} lastUpdated={new Date().toISOString()} />
 
@@ -111,7 +128,7 @@ export default function Dashboard() {
               value: a.total_value,
               fullName: a.agency
             }))}
-            color="#8b5cf6"
+            color="#FFD700"
             title="TOP SPENDING AGENCIES"
           />
           <SimpleBarChart
@@ -120,7 +137,7 @@ export default function Dashboard() {
               value: c.total_contract_value,
               fullName: c.name
             }))}
-            color="#00d4ff"
+            color="#00E5FF"
             title="TOP CONTRACTORS"
           />
         </div>
@@ -137,13 +154,13 @@ export default function Dashboard() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-[#1a2147] px-6 py-4 mt-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-gray-500">
+      <footer className="border-t border-[#666666] px-6 py-4 mt-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-[#666666]">
           <div>
             Data Sources: USAspending.gov | SAM.gov | Last Updated: {new Date().toLocaleDateString()}
           </div>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-[#00d4ff] transition-colors">Methodology</a>
+            <a href="#" className="hover:text-[#00E5FF] transition-colors">Methodology</a>
           </div>
         </div>
       </footer>
