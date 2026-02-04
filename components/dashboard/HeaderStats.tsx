@@ -73,7 +73,7 @@ function StatItem({
       </span>
       <span className={
         highlight
-          ? "text-[#00ff00] font-bold"
+          ? "text-[#00d4ff] font-bold"
           : subdued
           ? "text-gray-400"
           : "text-[#00d4ff] font-mono"

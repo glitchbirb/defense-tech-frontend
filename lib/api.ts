@@ -207,7 +207,17 @@ export async function getStats(): Promise<ApiResponse<Stats>> {
 
     // Backend already returns {success, data} format for this endpoint
     if (json.success && json.data) {
-      return json;
+      // Convert total_spending_usd from string to number if needed
+      const data = {
+        ...json.data,
+        total_spending_usd: typeof json.data.total_spending_usd === 'string'
+          ? parseFloat(json.data.total_spending_usd)
+          : json.data.total_spending_usd
+      };
+      return {
+        success: true,
+        data
+      };
     }
 
     // Fallback if format is different

@@ -25,7 +25,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search contractors, recipients, contracts... (Cmd+K)"
-            className="w-full px-6 py-4 bg-[#0f1433] border-2 border-[#1a2147] rounded-lg text-[#00ff00] placeholder-gray-500 focus:border-[#00d4ff] focus:outline-none text-lg font-mono transition-colors"
+            className="w-full px-6 py-4 bg-[#0f1433] border-2 border-[#1a2147] rounded-lg text-white placeholder-gray-500 focus:border-[#00d4ff] focus:outline-none text-lg font-mono transition-colors"
           />
           <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
             <button

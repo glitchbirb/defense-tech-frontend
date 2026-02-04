@@ -131,7 +131,7 @@ export default function Dashboard() {
             <RecentContracts contracts={contracts} />
           </div>
           <div>
-            <TrendingInsights />
+            <TrendingInsights contracts={contracts} />
           </div>
         </div>
       </div>
