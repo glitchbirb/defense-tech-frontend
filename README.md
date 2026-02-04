@@ -18,6 +18,7 @@ Bloomberg Terminal-style frontend for tracking US defense spending to tech compa
 - Real-time search of defense contracts
 - Bloomberg Terminal-style dark theme interface
 - Interactive charts and visualizations
+- NAICS industry classification tracking
 - Contractor and recipient detail pages
 - Social sharing with citations
 - Mobile-responsive design
@@ -75,8 +76,8 @@ The frontend is automatically deployed to Cloudflare Pages on every push to `mai
 
 ### Cloudflare Pages Configuration
 - **Build command**: `npm run build`
-- **Build output directory**: `.next`
-- **Environment variables**: Set `NEXT_PUBLIC_API_URL` in Cloudflare Pages dashboard
+- **Build output directory**: `out`
+- **Environment variables**: Set `NEXT_PUBLIC_API_URL` in GitHub Actions secrets
 
 ## Backend API
 
