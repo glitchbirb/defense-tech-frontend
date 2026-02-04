@@ -3,6 +3,7 @@
 import { formatCurrencyFull, formatDate, getAmountColor } from '@/lib/formatting';
 import { Contract } from '@/types';
 import { useState } from 'react';
+import { ContractModal } from '@/components/contracts/ContractModal';
 
 interface RecentContractsProps {
   contracts: Contract[];
@@ -10,6 +11,8 @@ interface RecentContractsProps {
 
 export function RecentContracts({ contracts }: RecentContractsProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 20;
   const totalPages = Math.ceil(contracts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -22,6 +25,16 @@ export function RecentContracts({ contracts }: RecentContractsProps) {
 
   const handleCompanyClick = (companyName: string) => {
     alert(`Company profile for "${companyName}" coming soon!`);
+  };
+
+  const handleContractClick = (contract: Contract) => {
+    setSelectedContract(contract);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedContract(null);
   };
 
   return (
@@ -46,7 +59,7 @@ export function RecentContracts({ contracts }: RecentContractsProps) {
               <th className="text-left py-2 px-2 text-gray-400 font-normal">Agency</th>
               <th className="text-right py-2 px-2 text-gray-400 font-normal">Amount</th>
               <th className="text-left py-2 px-2 text-gray-400 font-normal">Date</th>
-              <th className="text-center py-2 px-2 text-gray-400 font-normal">Source</th>
+              <th className="text-center py-2 px-2 text-gray-400 font-normal">Details</th>
             </tr>
           </thead>
           <tbody>
@@ -73,15 +86,13 @@ export function RecentContracts({ contracts }: RecentContractsProps) {
                   {formatDate(contract.contract_date)}
                 </td>
                 <td className="py-3 px-2 text-center">
-                  <a
-                    href={`https://www.usaspending.gov/award/${contract.contract_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-500 hover:text-green-400 text-xs"
-                    title="View source on USAspending.gov"
+                  <button
+                    onClick={() => handleContractClick(contract)}
+                    className="text-[#00d4ff] hover:text-[#00ff00] text-xs font-semibold transition-colors"
+                    title="View contract details"
                   >
-                    ✓ USA 🔗
-                  </a>
+                    View Details
+                  </button>
                 </td>
               </tr>
             ))}
@@ -113,6 +124,13 @@ export function RecentContracts({ contracts }: RecentContractsProps) {
           </button>
         </div>
       </div>
+
+      {/* Contract Details Modal */}
+      <ContractModal
+        contract={selectedContract}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
     </div>
   );
 }
